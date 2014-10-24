@@ -20,7 +20,7 @@ struct color{
 typedef struct color Color;
 
 #define NUM_CLASSES 5
-#define ERROR_FCM 0.7
+#define ERROR_FCM 0.8
 #define FUZZIFIER 2
 
 struct vec3 {
@@ -46,7 +46,8 @@ int main(int argc, const char * argv[]) {
         //listar os pontos RGB do arquivo
         
         string line;
-        while( getline(dataset_file, line) )
+        int i=2000;
+        while( getline(dataset_file, line) && i--)
         {
             Color cor;
             istringstream is( line );
@@ -134,6 +135,15 @@ int main(int argc, const char * argv[]) {
                 U.at(i).push_back(1/soma_dem);
             }
         }
+        
+        /*for(int i = 0; i<10; i++)
+        {
+            for(int j = 0; j<5; j++)
+            {
+                cout << U.at(i).at(j) << " " << U_anterior.at(i).at(j) << endl;
+            }
+        }
+        cout << endl;//*/
         
         //for for IF error
         bool algum_maior = false;
