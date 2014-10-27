@@ -12,11 +12,14 @@
 #include <sstream>
 #include <cmath>
 
+#include "CImg.h"
+
 #define NUM_CLASSES 5
 #define ERROR_FCM 0.0005
 #define FUZZIFIER 2
 //comentario
 using namespace std;
+using namespace cimg_library;
 
 struct color{
     float r, g, b, y;
@@ -52,6 +55,10 @@ int main(int argc, const char * argv[]) {
 //    cout << normaN(a,b) << endl;
 //    return 0;
     
+	//TEST display empty image
+	/*CImg<unsigned char> image(250, 100, 1,3,255);
+	image.display();*/
+
     //abrir o arquivo
     if(dataset_file){
         cout << "Achou o arquivo.\n";
