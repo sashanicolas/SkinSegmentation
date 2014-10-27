@@ -15,7 +15,7 @@
 #define NUM_CLASSES 5
 #define ERROR_FCM 0.0005
 #define FUZZIFIER 2
-
+//comentario
 using namespace std;
 
 struct color{
