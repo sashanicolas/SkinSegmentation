@@ -70,22 +70,12 @@ void gaussianFunction(CImg<unsigned char>& image, float mi, float sigma, int cor
 int main(int argc, const char * argv[]) {
     ifstream dataset_file("Skin_NonSkin.txt", ios::in);
     vector< Color > data;
-    
-//    vector<float> a = {3,0};
-//    vector<float> b = {0,4};
-//    cout << normaN(a,b) << endl;
-//    return 0;
-    
-	//TEST display empty image
+        
+	//Create empty images
 	CImg<unsigned char> image_r(255, 100, 1, 3, 255);
 	CImg<unsigned char> image_g(255, 100, 1, 3, 255);
 	CImg<unsigned char> image_b(255, 100, 1, 3, 255);
-	//test gaussian function
-	/*const unsigned char colorTEst[] = { 255, 0, 0 };
-	gaussianFunction(image_r, 150., 10., 255,0,0);
-	CImgDisplay image_r_disp(image_r, "Graph R"); // outra maneira de fazer um display, podemos dar um nome na janela com essa funçao.
-	image_r.display();//*/
-
+	
     //abrir o arquivo
     if(dataset_file){
         cout << "Achou o arquivo.\n";
@@ -133,8 +123,8 @@ int main(int argc, const char * argv[]) {
     //end - arquivo carregado em data
     
     //Fuzzy c-means (FCM)
-    //int N = (int) data.size();
-	int N = 10000;
+    int N = (int) data.size();
+	//int N = 10000;
     vector< vector<float> > U; //matriz de graus de associacao (degree of membership)
     vector< vector<float> > U_anterior;
     
