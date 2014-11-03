@@ -17,7 +17,9 @@
 #define NUM_CLASSES 5
 #define ERROR_FCM 0.0005
 #define FUZZIFIER 2
-//comentario
+#define M_PI 3.14159265358979323846 
+#define SIGMA 10.
+  
 using namespace std;
 using namespace cimg_library;
 
@@ -46,6 +48,25 @@ float normaN(vector<float> a, vector<float> b){
     return sqrt( soma );
 }
 
+void gaussianFunction(CImg<unsigned char>& image, float mi, float sigma, int corR, int corG, int corB){
+
+	int h = image.height();
+	int w = image.width();
+	for (int i = 0; i < w; i++){
+		float j = (1. / (sigma*sqrt(2 * M_PI)))* exp(-0.5*pow((i-mi)/sigma,2));
+		int y = h - j*1000;
+		image(i, y,0) = corR;
+		image(i, y, 1) = corG;
+		image(i, y, 2) = corB;
+	}
+	// resolver problema de display da Cimg
+	for (int i = 0; i < w; i++){
+		image(i, 0, 0) = 255;
+		image(i, 0, 1) = 255;
+		image(i, 0, 2) = 255;
+	}
+}
+
 int main(int argc, const char * argv[]) {
     ifstream dataset_file("Skin_NonSkin.txt", ios::in);
     vector< Color > data;
@@ -56,8 +77,14 @@ int main(int argc, const char * argv[]) {
 //    return 0;
     
 	//TEST display empty image
-	/*CImg<unsigned char> image(250, 100, 1,3,255);
-	image.display();*/
+	CImg<unsigned char> image_r(255, 100, 1, 3, 255);
+	CImg<unsigned char> image_g(255, 100, 1, 3, 255);
+	CImg<unsigned char> image_b(255, 100, 1, 3, 255);
+	//test gaussian function
+	/*const unsigned char colorTEst[] = { 255, 0, 0 };
+	gaussianFunction(image_r, 150., 10., 255,0,0);
+	CImgDisplay image_r_disp(image_r, "Graph R"); // outra maneira de fazer um display, podemos dar um nome na janela com essa funçao.
+	image_r.display();//*/
 
     //abrir o arquivo
     if(dataset_file){
@@ -106,7 +133,8 @@ int main(int argc, const char * argv[]) {
     //end - arquivo carregado em data
     
     //Fuzzy c-means (FCM)
-    int N = (int) data.size();
+    //int N = (int) data.size();
+	int N = 10000;
     vector< vector<float> > U; //matriz de graus de associacao (degree of membership)
     vector< vector<float> > U_anterior;
     
@@ -151,7 +179,7 @@ int main(int argc, const char * argv[]) {
             C.push_back(centroid);
         }
         
-        cout << "Imprime os U:"<<endl;
+        /*cout << "Imprime os U:"<<endl;
         for(int i = 0; i<50000; i+=2000)
         {
             for(int j = 0; j<NUM_CLASSES; j++)
@@ -186,7 +214,7 @@ int main(int argc, const char * argv[]) {
             }
         }
         
-        cout << "Imprime os centros:"<<endl;
+        /*cout << "Imprime os centros:"<<endl;
         for(int i = 0; i<NUM_CLASSES; i++)
         {
             cout << "r=" << C.at(i).at(0) << " g=" << C.at(i).at(1) << " b=" << C.at(i).at(2) << endl;
@@ -206,12 +234,35 @@ int main(int argc, const char * argv[]) {
         
         step_k++;
     }
-    cout << "Imprime os centros finais:"<<endl;
+    /*cout << "Imprime os centros finais:"<<endl;
     for(int i = 0; i<NUM_CLASSES; i++)
     {
         cout << "r=" << C.at(i).at(0) << " g=" << C.at(i).at(1) << " b=" << C.at(i).at(2) << endl;
         
-    }
+    }//*/
+
+	//display gaussians
+	int colorC1[3] = { 0, 0, 0 }; // black
+	int colorC2[3] = { 0, 255, 0 }; // green
+	int colorC3[3] = { 0, 0, 255 }; //blue
+	int colorC4[3] = { 255, 0, 0 };// red
+	int colorC5[3] = { 255, 0, 255 }; // ? something in between
+	vector<int*> colors;
+	colors.push_back(colorC1);
+	colors.push_back(colorC2);
+	colors.push_back(colorC3);
+	colors.push_back(colorC4);
+	colors.push_back(colorC5);
+	for (int i = 0; i < NUM_CLASSES; i++){
+		float mi = C.at(i).at(0); // r
+		gaussianFunction(image_r, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
+		mi = C.at(i).at(1); // g
+		gaussianFunction(image_g, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
+		C.at(i).at(0); // b
+		gaussianFunction(image_b, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
+	}
+	(image_r, image_g, image_b).display();
+
     return 0;
 }
 
