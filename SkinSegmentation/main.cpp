@@ -68,6 +68,7 @@ void gaussianFunction(CImg<unsigned char>& image, float mi, float sigma, int cor
 }
 
 int main(int argc, const char * argv[]) {
+
     ifstream dataset_file("Skin_NonSkin.txt", ios::in);
     vector< Color > data;
         
@@ -89,7 +90,9 @@ int main(int argc, const char * argv[]) {
             istringstream is( line );
             is >> cor.b >> cor.g >> cor.r >> cor.y;
             //cout << cor.b << " " << cor.g << " " << cor.r << " " << cor.y << endl;
-            data.push_back(cor);
+			//if (cor.y == 1){ // skin only
+				data.push_back(cor);
+			//}
         }
     }else{ //if ler o aquivo
         cout << "Nao achou o arquivo\n";
@@ -232,27 +235,63 @@ int main(int argc, const char * argv[]) {
     }//*/
 
 	//display gaussians
-	int colorC1[3] = { 0, 0, 0 }; // black
-	int colorC2[3] = { 0, 255, 0 }; // green
-	int colorC3[3] = { 0, 0, 255 }; //blue
-	int colorC4[3] = { 255, 0, 0 };// red
-	int colorC5[3] = { 255, 0, 255 }; // ? something in between
-	vector<int*> colors;
-	colors.push_back(colorC1);
-	colors.push_back(colorC2);
-	colors.push_back(colorC3);
-	colors.push_back(colorC4);
-	colors.push_back(colorC5);
-	for (int i = 0; i < NUM_CLASSES; i++){
-		float mi = C.at(i).at(0); // r
-		gaussianFunction(image_r, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
-		mi = C.at(i).at(1); // g
-		gaussianFunction(image_g, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
-		C.at(i).at(0); // b
-		gaussianFunction(image_b, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
-	}
-	(image_r, image_g, image_b).display();
+	//int colorC1[3] = { 0, 0, 0 }; // black
+	//int colorC2[3] = { 0, 255, 0 }; // green
+	//int colorC3[3] = { 0, 0, 255 }; //blue
+	//int colorC4[3] = { 255, 0, 0 };// red
+	//int colorC5[3] = { 255, 0, 255 }; // ? something in between
+	//vector<int*> colors;
+	//colors.push_back(colorC1);
+	//colors.push_back(colorC2);
+	//colors.push_back(colorC3);
+	//colors.push_back(colorC4);
+	//colors.push_back(colorC5);
+	//for (int i = 0; i < NUM_CLASSES; i++){
+	//	float mi = C.at(i).at(0); // r
+	//	gaussianFunction(image_r, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
+	//	mi = C.at(i).at(1); // g
+	//	gaussianFunction(image_g, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
+	//	C.at(i).at(0); // b
+	//	gaussianFunction(image_b, mi, SIGMA, colors[i][0], colors[i][1], colors[i][2]);
+	//}
+	//(image_r, image_g, image_b).display();
 
+	// Write new archives :
+	// --> Centroid centers
+	ofstream centroid_file("centroid_centers.txt", ios::out);
+	if (centroid_file) {
+		cout << "Output file centroid_centers.txt created." << endl;
+		for (int i = 0; i<NUM_CLASSES; i++){
+			centroid_file << C.at(i).at(0) << " " << C.at(i).at(1) << " " << C.at(i).at(2) << endl;
+		}
+		centroid_file.close();  // on referme le fichier
+	}
+	else cout << "Output file centroid_centers.txt creation FAILED." << endl;
+
+	//Write results in .txt files
+	vector<const char*> files;
+	files.push_back("points_class_1_centers.txt");
+	files.push_back("points_class_2_centers.txt");
+	files.push_back("points_class_3_centers.txt");
+	files.push_back("points_class_4_centers.txt");
+	files.push_back("points_class_5_centers.txt");
+	//if (points_class_1_file) {
+		for (int i = 0; i < U.size(); i++){
+			float max = 0;
+			int target_class = 0;
+			for (int j = 0; j < NUM_CLASSES; j++){
+				if (U.at(i).at(j) > max){
+					max = U.at(i).at(j);
+					target_class = j;
+				}
+			}
+			ofstream file(files.at(target_class), ios::app);
+			if (file) {
+				file << data.at(i).r << " " << data.at(i).g << " " << data.at(i).b << endl;
+			}
+			else cout << "FAILED to write in file points_class_" << max <<"_centers.txt"<< endl;
+		}
+	
     return 0;
 }
 
