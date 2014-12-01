@@ -83,8 +83,8 @@ int main(int argc, const char * argv[]) {
         //listar os pontos RGB do arquivo
         
         string line;
-//        int i=50000;
-        while( getline(dataset_file, line))
+        int i=50000;
+        while( getline(dataset_file, line) && i--)
         {
             Color cor;
             istringstream is( line );
