@@ -15,8 +15,8 @@
 
 #include "CImg.h"
 
-#define NUM_CLASSES 4
-#define ERROR_FCM 0.0005
+#define NUM_CLASSES 6
+#define ERROR_FCM 0.005
 
 #define FUZZIFIER 2
 //#define M_PI 3.14159265358979323846 
@@ -296,23 +296,25 @@ int main(int argc, const char * argv[]) {
 	// Write new archives :
 	// --> Centroid centers
 	
-	ofstream centroid_file("centroid_4_centers.txt", ios::out);
+	ofstream centroid_file("centroid_5_centers.txt", ios::out);
 	if (centroid_file) {
-		cout << "Output file centroid_4_centers.txt created." << endl;
+		cout << "Output file centroid_5_centers.txt created." << endl;
 		for (int i = 0; i<NUM_CLASSES; i++){
 			centroid_file << C.at(i).at(0) << " " << C.at(i).at(1) << " " << C.at(i).at(2) << endl;
 		}
 		centroid_file.close();  // on referme le fichier
 	}
-	else cout << "Output file centroid_4_centers.txt creation FAILED." << endl;
+	else cout << "Output file centroid_5_centers.txt creation FAILED." << endl;
 
 	//Write results in .txt files
 	vector<string> files;
+    std::stringstream sstm;
     
-    files.push_back("points_class_1_4_centroids.txt");
-    files.push_back("points_class_2_4_centroids.txt");
-    files.push_back("points_class_3_4_centroids.txt");
-    files.push_back("points_class_4_4_centroids.txt");
+    for (int i = 0; i < NUM_CLASSES; i++){
+        sstm.str("");
+        sstm << "points_class_"<< i+1 << "_" << NUM_CLASSES << "_centroids.txt";
+        files.push_back(sstm.str());
+    }
 
 
 	//if (points_class_1_file) {
@@ -334,9 +336,34 @@ int main(int argc, const char * argv[]) {
 	
     
     //escrever o data.attrs
-    ofstream dataAttrs("data.attrs", ios::app);
+    ofstream dataAttrs("dataattrs.txt", ios::app);
     if(dataAttrs){
+        float mu;
+        cout << "Arquivo dataattrs.txt criado." << endl;
+        dataAttrs << "3" << endl;
+
+        dataAttrs << "R 1 5 0 255" << endl;
+        for (int i = 0; i<NUM_CLASSES; i++){
+            mu = C.at(i).at(0);
+            dataAttrs << "C" << i+1 << " " << (mu-2*SIGMA)/255.0 << " " << (mu-SIGMA/2)/255.0 << " " << (mu+SIGMA/2)/255.0 << " " << (mu+2*SIGMA)/255.0 <<endl;
+        }
         
+        dataAttrs << "G 1 5 0 255" << endl;
+        for (int i = 0; i<NUM_CLASSES; i++){
+            mu = C.at(i).at(1);
+            dataAttrs << "C" << i+1 << " " << (mu-2*SIGMA)/255.0 << " " << (mu-SIGMA/2)/255.0 << " " << (mu+SIGMA/2)/255.0 << " " << (mu+2*SIGMA)/255.0 <<endl;
+        }
+        
+        dataAttrs << "B 1 5 0 255" << endl;
+        for (int i = 0; i<NUM_CLASSES; i++){
+            mu = C.at(i).at(2);
+            dataAttrs << "C" << i+1 << " " << (mu-2*SIGMA)/255.0 << " " << (mu-SIGMA/2)/255.0 << " " << (mu+SIGMA/2)/255.0 << " " << (mu+2*SIGMA)/255.0 <<endl;
+        }
+        
+        dataAttrs << endl;
+        dataAttrs << "0 2" << endl;
+        dataAttrs << "Skin" << endl;
+        dataAttrs << "Nonskin" << endl;
     }
     
     return 0;
