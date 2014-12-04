@@ -11,10 +11,11 @@
 #include <vector>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
 
 #include "CImg.h"
 
-#define NUM_CLASSES 5
+#define NUM_CLASSES 4
 #define ERROR_FCM 0.0005
 #define FUZZIFIER 2
 #define M_PI 3.14159265358979323846 
@@ -73,9 +74,9 @@ int main(int argc, const char * argv[]) {
     vector< Color > data;
         
 	//Create empty images
-	CImg<unsigned char> image_r(255, 100, 1, 3, 255);
+	/*CImg<unsigned char> image_r(255, 100, 1, 3, 255);
 	CImg<unsigned char> image_g(255, 100, 1, 3, 255);
-	CImg<unsigned char> image_b(255, 100, 1, 3, 255);
+	CImg<unsigned char> image_b(255, 100, 1, 3, 255);*/
 	
     //abrir o arquivo
     if(dataset_file){
@@ -83,8 +84,8 @@ int main(int argc, const char * argv[]) {
         //listar os pontos RGB do arquivo
         
         string line;
-        int i=50000;
-        while( getline(dataset_file, line) && i--)
+        //int i=50000;
+        while( getline(dataset_file, line) )
         {
             Color cor;
             istringstream is( line );
@@ -99,6 +100,38 @@ int main(int argc, const char * argv[]) {
         return 0;
     }//if ler o aquivo
     //*/
+
+	/*
+	 * Gerar asquivos de treino e teste
+	 *
+	random_shuffle(data.begin(), data.end());
+	random_shuffle(data.begin(), data.end());
+	random_shuffle(data.begin(), data.end());
+	//treino
+	ofstream training_data_file("training_data.txt", ios::out);
+	if (training_data_file) {
+		cout << "Output file training_data.txt created." << endl;
+		training_data_file << "200000 3" << endl;
+		for (int i = 0; i<200000; i++){
+			training_data_file << data.at(i).r << " " << data.at(i).g << " " << data.at(i).g << (data.at(i).y==1?" Skin 1":" Nonskin 1") << endl;
+		}
+		training_data_file.close();  // on referme le fichier
+	}
+	else cout << "Output file training_data.txt creation FAILED." << endl;
+	
+	//teste
+	ofstream testing_data_file("testing_data.txt", ios::out);
+	if (testing_data_file) {
+		cout << "Output file testing_data_file.txt created." << endl;
+		testing_data_file << "" << data.size() - 200000 << " 3" << endl;
+		for (int i = 200000; i<data.size(); i++){
+			testing_data_file << data.at(i).r << " " << data.at(i).g << " " << data.at(i).g << (data.at(i).y == 1 ? " Skin 1" : " Nonskin 1") << endl;
+		}
+		testing_data_file.close();  // on referme le fichier
+	}
+	else cout << "Output file testing_data_file.txt creation FAILED." << endl;
+
+	return 0;*/
         
     //teste com pontos controlados
     /*for (int i=0; i<10; i++) {
@@ -258,23 +291,26 @@ int main(int argc, const char * argv[]) {
 
 	// Write new archives :
 	// --> Centroid centers
-	ofstream centroid_file("centroid_centers.txt", ios::out);
+	
+	ofstream centroid_file("centroid_4_centers.txt", ios::out);
 	if (centroid_file) {
-		cout << "Output file centroid_centers.txt created." << endl;
+		cout << "Output file centroid_4_centers.txt created." << endl;
 		for (int i = 0; i<NUM_CLASSES; i++){
 			centroid_file << C.at(i).at(0) << " " << C.at(i).at(1) << " " << C.at(i).at(2) << endl;
 		}
 		centroid_file.close();  // on referme le fichier
 	}
-	else cout << "Output file centroid_centers.txt creation FAILED." << endl;
+	else cout << "Output file centroid_4_centers.txt creation FAILED." << endl;
 
 	//Write results in .txt files
-	vector<const char*> files;
-	files.push_back("points_class_1_centers.txt");
-	files.push_back("points_class_2_centers.txt");
-	files.push_back("points_class_3_centers.txt");
-	files.push_back("points_class_4_centers.txt");
-	files.push_back("points_class_5_centers.txt");
+	vector<string> files;
+	for (int i = 0; i < NUM_CLASSES; i++){
+		string a = "_centers.txt";
+		string b = "_" + NUM_CLASSES + a;
+		string s = "points_class_" + (i+1) + b;
+		files.push_back(s);
+	}
+
 	//if (points_class_1_file) {
 		for (int i = 0; i < U.size(); i++){
 			float max = 0;
@@ -285,7 +321,7 @@ int main(int argc, const char * argv[]) {
 					target_class = j;
 				}
 			}
-			ofstream file(files.at(target_class), ios::app);
+			ofstream file(files.at(target_class).c_str(), ios::app);
 			if (file) {
 				file << data.at(i).r << " " << data.at(i).g << " " << data.at(i).b << endl;
 			}
