@@ -15,7 +15,7 @@
 
 #include "CImg.h"
 
-#define NUM_CLASSES 6
+#define NUM_CLASSES 10
 #define ERROR_FCM 0.005
 
 #define FUZZIFIER 2
