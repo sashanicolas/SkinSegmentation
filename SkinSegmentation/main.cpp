@@ -15,13 +15,9 @@
 
 #include "CImg.h"
 
-<<<<<<< Updated upstream
 #define NUM_CLASSES 4
 #define ERROR_FCM 0.0005
-=======
-#define NUM_CLASSES 5
-#define ERROR_FCM 0.00005
->>>>>>> Stashed changes
+
 #define FUZZIFIER 2
 //#define M_PI 3.14159265358979323846 
 #define SIGMA 10.
@@ -96,14 +92,11 @@ int main(int argc, const char * argv[]) {
             istringstream is( line );
             is >> cor.b >> cor.g >> cor.r >> cor.y;
             //cout << cor.b << " " << cor.g << " " << cor.r << " " << cor.y << endl;
-<<<<<<< Updated upstream
+
 			//if (cor.y == 1){ // skin only
 				data.push_back(cor);
 			//}
-=======
-            //if(cor.y==2) break;
-            data.push_back(cor);
->>>>>>> Stashed changes
+
         }
     }else{ //if ler o aquivo
         cout << "Nao achou o arquivo\n";
@@ -279,7 +272,6 @@ int main(int argc, const char * argv[]) {
     }//*/
 
 	//display gaussians
-<<<<<<< Updated upstream
 	//int colorC1[3] = { 0, 0, 0 }; // black
 	//int colorC2[3] = { 0, 255, 0 }; // green
 	//int colorC3[3] = { 0, 0, 255 }; //blue
@@ -316,29 +308,12 @@ int main(int argc, const char * argv[]) {
 
 	//Write results in .txt files
 	vector<string> files;
-=======
-	/*int colorC1[3] = { 0, 0, 0 }; // black
-	int colorC2[3] = { 0, 255, 0 }; // green
-	int colorC3[3] = { 0, 0, 255 }; //blue
-	int colorC4[3] = { 255, 0, 0 };// red
-	int colorC5[3] = { 255, 0, 255 }; // ? something in between
-	vector<int*> colors;
-	colors.push_back(colorC1);
-	colors.push_back(colorC2);
-	colors.push_back(colorC3);
-	colors.push_back(colorC4);
-	colors.push_back(colorC5);
->>>>>>> Stashed changes
-	for (int i = 0; i < NUM_CLASSES; i++){
-		string a = "_centers.txt";
-		string b = "_" + NUM_CLASSES + a;
-		string s = "points_class_" + (i+1) + b;
-		files.push_back(s);
-	}
-<<<<<<< Updated upstream
-=======
-	(image_r, image_g, image_b).display();//*/
->>>>>>> Stashed changes
+    
+    files.push_back("points_class_1_4_centroids.txt");
+    files.push_back("points_class_2_4_centroids.txt");
+    files.push_back("points_class_3_4_centroids.txt");
+    files.push_back("points_class_4_4_centroids.txt");
+
 
 	//if (points_class_1_file) {
 		for (int i = 0; i < U.size(); i++){
@@ -357,6 +332,13 @@ int main(int argc, const char * argv[]) {
 			else cout << "FAILED to write in file points_class_" << max <<"_centers.txt"<< endl;
 		}
 	
+    
+    //escrever o data.attrs
+    ofstream dataAttrs("data.attrs", ios::app);
+    if(dataAttrs){
+        
+    }
+    
     return 0;
 }
 
